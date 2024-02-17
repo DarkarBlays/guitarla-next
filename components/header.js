@@ -44,6 +44,17 @@ export default function Header() {
           >
             Blog
           </Link>
+
+          <Link href="/carrito">
+            <a className={styles.carrito}>
+              <Image 
+                src="/img/carrito.png"
+                width={100}
+                height={50}
+                alt="Imagen Logotipo"
+              />
+            </a>
+          </Link>
         </nav>
       </div>
     </header>
