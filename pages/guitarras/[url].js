@@ -1,18 +1,18 @@
 import Image from 'next/future/image'
 import styles from '../../styles/guitarras.module.css'
 import Layout from '../../components/layout'
-import {useState} from 'react'
+import { useState } from 'react'
 
 
-export default function Producto({guitarra,agregarCarrito}) {
+export default function Producto({ guitarra, agregarCarrito }) {
 
-    const [cantidad,setCantidad] = useState(0)
-    const {nombre,descripcion,imagen,precio} = guitarra[0].attributes
+    const [cantidad, setCantidad] = useState(0)
+    const { nombre, descripcion, imagen, precio } = guitarra[0].attributes
 
-    const handleSubmit = e =>{
+    const handleSubmit = e => {
         e.preventDefault()
 
-        if(cantidad < 1) {
+        if (cantidad < 1) {
             alert('Cantidad no valida')
             return
         }
@@ -35,21 +35,21 @@ export default function Producto({guitarra,agregarCarrito}) {
             title={`Guitarra ${nombre}`}
         >
             <div className={styles.guitarra}>
-                <Image src={imagen.data.attributes.url} width={600} height={400} alt={`Imagen guitarra ${nombre}`}/>
+                <Image src={imagen.data.attributes.url} width={600} height={400} alt={`Imagen guitarra ${nombre}`} />
 
                 <div className={styles.contenido}>
                     <h3>{nombre}</h3>
                     <p className={styles.descripcion}>{descripcion}</p>
                     <p className={styles.precio}>$ {precio}</p>
 
-                    <form 
+                    <form
                         onSubmit={handleSubmit}
                         className={styles.formulario}
                     >
                         <label htmlFor='cantidad'>
                             Cantidad:
                         </label>
-                        <select 
+                        <select
                             onChange={e => setCantidad(+e.target.value)}
                             id='cantidad'
                         >
@@ -60,7 +60,7 @@ export default function Producto({guitarra,agregarCarrito}) {
                             <option value='4'>4</option>
                             <option value='5'>5</option>
                         </select>
-                        <input type='submit' value='Agregar al carrito'/>
+                        <input type='submit' value='Agregar al carrito' />
                     </form>
                 </div>
             </div>
@@ -68,45 +68,32 @@ export default function Producto({guitarra,agregarCarrito}) {
     )
 }
 
-export async function getStaticPaths(){
+export async function getStaticPaths() {
     const respuesta = await fetch(`${process.env.API_URL}/guitarras`)
 
-    const {data} = await respuesta.json()
-    const paths = data.map(guitarra=>({
-       params: {
-        url: guitarra.attributes.url
-       } 
+    const { data } = await respuesta.json()
+    const paths = data.map(guitarra => ({
+        params: {
+            url: guitarra.attributes.url,
+        },
     }))
 
-    return{
+    console.log(paths)
+    return {
         paths,
-        fallback: false
+        fallback: false,
     }
 }
 
-export async function getStaticProps({params: {url}}){
-    
+export async function getStaticProps({ params: { url } }) {
+
     const respuesta = await fetch(`${process.env.API_URL}/guitarras?filters[url]=${url}&populate=imagen`)
 
-    const {data: guitarra} = await respuesta.json()
+    const { data: guitarra } = await respuesta.json()
 
-    return{
-        props:{
+    return {
+        props: {
             guitarra
         }
     }
 }
-
-
-// export async function getServerSideProps({query: {url}}){
-    
-//     const respuesta = await fetch(`${process.env.API_URL}/guitarras?filters[url]=${url}&populate=imagen`)
-
-//     const {data: guitarra} = await respuesta.json()
-
-//     return{
-//         props:{
-//             guitarra
-//         }
-//     }
-// }
