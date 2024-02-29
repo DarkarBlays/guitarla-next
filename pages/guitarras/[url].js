@@ -69,19 +69,29 @@ export default function Producto({ guitarra, agregarCarrito }) {
 }
 
 export async function getStaticPaths() {
-    const respuesta = await fetch(`${process.env.API_URL}/guitarras`)
+    try {
+        const respuesta = await fetch(`${process.env.API_URL}/guitarras`)
+        const { data } = await respuesta.json()
 
-    const { data } = await respuesta.json()
-    const paths = data.map(guitarra => ({
-        params: {
-            url: guitarra.attributes.url,
-        },
-    }))
+        if (!data) {
+            console.error("No se encontraron datos de guitarras.")
+            return { paths: [], fallback: false }
+        }
 
-    console.log(paths)
-    return {
-        paths,
-        fallback: false,
+        const paths = data.map(guitarra => ({
+            params: {
+                url: guitarra.attributes.url,
+            },
+        }))
+
+        console.log(paths)
+        return {
+            paths,
+            fallback: false,
+        }
+    } catch (error) {
+        console.error("Error al obtener datos de guitarras:", error)
+        return { paths: [], fallback: false }
     }
 }
 
